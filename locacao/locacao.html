@@ -6,13 +6,12 @@
   <title>Locação de Veículos - Rostur Rent Car</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="stylesheet" href="styles.css"/>
-
 </head>
 <body>
 
 <script>
   if (sessionStorage.getItem('logado') !== 'true') {
-    window.location.href = "../Login/login.html";
+    window.location.href = "../Login/login.html"; 
   }
 </script>
 
@@ -59,7 +58,7 @@
 
     <label>Horário de Devolução:</label>
     <input type="time" id="horaDevolucao" required>
-
+    
     <label>Data de Entrega:</label>
     <input type="date" id="dataEntrega" required>
 
@@ -99,27 +98,42 @@ async function gerarPDF() {
   const valorDiaria = parseFloat(document.getElementById('valorDiaria').value);
   const pagamento = document.getElementById('pagamento').value;
 
-  const diferencaDias = Math.ceil((new Date(dataDevolucao) - new Date(dataEntrega)) / (1000 * 60 * 60 * 24)) || 1;
+  const data1 = new Date(dataEntrega);
+  const data2 = new Date(dataDevolucao);
+  const diferencaDias = Math.ceil((data2 - data1) / (1000 * 60 * 60 * 24)) || 1;
+
   const valorTotal = valorDiaria * diferencaDias;
 
+  const valorTotalFormatado = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  }).format(valorTotal);
+
+  const kmEntregaFormatado = kmEntrega.toLocaleString('pt-BR');
+
+  const empresa = "Rostur Rent Car";
+  const cnpj = "00.000.000/0000-00";
   const pdf = new jsPDF();
+  const logoUrl = 'logo.png';
+
   const pageWidth = pdf.internal.pageSize.getWidth();
-  const logo = await fetch('Logo.png')
-    .then(res => res.blob())
-    .then(blob => new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    }));
+  const logoX = 10, logoY = 5, logoWidth = 30, logoHeight = 30;
 
-  pdf.addImage(logo, 'PNG', 10, 5, 30, 30);
+  pdf.addImage(logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
+  const textoX = logoX + logoWidth + 5;
+  const textoY = logoY + 10;
+
   pdf.setFontSize(18);
-  pdf.text("Rostur Rent Car", 45, 15);
+  pdf.text(empresa, textoX, textoY);
   pdf.setFontSize(12);
-  pdf.text("CNPJ: 00.000.000/0000-00", 45, 23);
+  pdf.text(`CNPJ: ${cnpj}`, textoX, textoY + 8);
 
-  let y = 40;
-   pdf.setFontSize(14);
+  const linhaY = logoY + logoHeight + 10;
+  pdf.line(10, linhaY, pageWidth - 10, linhaY);
+
+  let y = linhaY + 10;
+
+  pdf.setFontSize(14);
   pdf.text("Dados do Cliente", 14, y);
   pdf.setFontSize(11);
   pdf.text(`Nome: ${nome}`, 14, y += 8);
