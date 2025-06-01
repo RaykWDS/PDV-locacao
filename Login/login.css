@@ -1,0 +1,150 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  font-family: 'Roboto', sans-serif;
+  font-weight: normal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; /* Centraliza o conteúdo na vertical */
+  min-height: 100vh; /* Garante que o body ocupe 100% da altura da tela */
+}
+  
+  .logologin{
+    display: flex;
+    height: 130px;
+    width: auto;
+    justify-content: center;
+    margin-bottom: -40px;
+
+  }
+   
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    justify-content: flex-start;
+    padding-left: 15%;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: auto; 
+    margin-right: 8px; 
+    transform: scale(1.1);
+}
+
+.checkbox-container label {
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+}
+  .login-container {
+    background: rgba(255, 255, 255, 0.849);
+    padding: 30px;
+    border-radius: 8px;
+    width: 500px;
+    height: 400px;
+    text-align: center;
+    border: 0.8px solid #555;
+  }
+  .h2{
+    margin-top: -130px;
+    font-size: small;
+    font-weight: lighter;
+  }
+  .loginForm{
+    font-size: 1px;
+  }
+  
+  .login-container h2 {
+    margin-bottom: 20px;
+    z-index: 1;
+    font-weight: 300; 
+    color: #555;
+    font-family: 'Roboto', sans-serif;
+}
+  
+  .login-container input {
+    width: 70%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #555;
+    border-radius:2px;
+  }
+  
+  .login-container button {
+    width: 30%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: transform 0.2s ease;
+}
+
+.login-container button:hover {
+    background-color: #025dbe;
+    transform: scale(1.05); 
+}
+
+footer {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  color: #555;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #ccc;
+  position: relative; /* Ajuste para garantir que o footer fique no final */
+  bottom: -30px;
+}
+@media (max-width: 480px) {
+    .login-container {
+        width: 75%;
+        padding: 20px;
+        margin-top: -60px;
+    }
+
+    .login-container input {
+        width: 80%;
+    }
+
+    .login-container button {
+        width: 30%;
+    }
+
+    .logologin {
+        height: 100px;
+    }
+}
+footer {
+    margin-top: 170px;
+}
+@media (max-width: 320px) {
+    .login-container {
+        margin-top: 13px;
+        width: 75%;
+        height: 75%;
+        padding: 10px;
+    }
+
+    .login-container input {
+        width: 80%;
+    }
+
+    .login-container button {
+        width: 30%;
+        margin-top: 10px;
+    }
+
+    .logologin {
+        height: 100px;
+    }
+}
+footer {
+    margin-top: 2px;
+}
