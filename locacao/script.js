@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutBtn) {
       logoutBtn.addEventListener('click', function() {
         sessionStorage.removeItem('logado');
-        window.location.href = "../Login/login.html";
+        window.location.href = "/PDV-locacao/Login/login.html";
       });
     }
 });
