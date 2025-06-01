@@ -6,12 +6,85 @@
   <title>Locação de Veículos - Rostur Rent Car</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="stylesheet" href="styles.css"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    .navbar {
+      background-color: #1a1a1a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      color: white;
+    }
+    .logo-nav {
+      height: 40px;
+    }
+    .logo-title h4 {
+      margin: 0;
+      font-size: 16px;
+    }
+    .navbar-button {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 10px;
+      height: 60px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    form label {
+      display: block;
+      margin-top: 10px;
+    }
+    form input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    form button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    form button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
 
 <script>
   if (sessionStorage.getItem('logado') !== 'true') {
-    window.location.href = "../Login/login.html"; 
+    window.location.href = "../Login/login.html";
   }
 </script>
 
@@ -58,7 +131,7 @@
 
     <label>Horário de Devolução:</label>
     <input type="time" id="horaDevolucao" required>
-    
+
     <label>Data de Entrega:</label>
     <input type="date" id="dataEntrega" required>
 
@@ -98,41 +171,26 @@ async function gerarPDF() {
   const valorDiaria = parseFloat(document.getElementById('valorDiaria').value);
   const pagamento = document.getElementById('pagamento').value;
 
-  const data1 = new Date(dataEntrega);
-  const data2 = new Date(dataDevolucao);
-  const diferencaDias = Math.ceil((data2 - data1) / (1000 * 60 * 60 * 24)) || 1;
-
+  const diferencaDias = Math.ceil((new Date(dataDevolucao) - new Date(dataEntrega)) / (1000 * 60 * 60 * 24)) || 1;
   const valorTotal = valorDiaria * diferencaDias;
 
-  const valorTotalFormatado = new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  }).format(valorTotal);
-
-  const kmEntregaFormatado = kmEntrega.toLocaleString('pt-BR');
-
-  const empresa = "Rostur Rent Car";
-  const cnpj = "00.000.000/0000-00";
   const pdf = new jsPDF();
-  const logoUrl = 'logo.png';
-
   const pageWidth = pdf.internal.pageSize.getWidth();
-  const logoX = 10, logoY = 5, logoWidth = 30, logoHeight = 30;
+  const logo = await fetch('Logo.png')
+    .then(res => res.blob())
+    .then(blob => new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    }));
 
-  pdf.addImage(logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
-  const textoX = logoX + logoWidth + 5;
-  const textoY = logoY + 10;
-
+  pdf.addImage(logo, 'PNG', 10, 5, 30, 30);
   pdf.setFontSize(18);
-  pdf.text(empresa, textoX, textoY);
+  pdf.text("Rostur Rent Car", 45, 15);
   pdf.setFontSize(12);
-  pdf.text(`CNPJ: ${cnpj}`, textoX, textoY + 8);
+  pdf.text("CNPJ: 00.000.000/0000-00", 45, 23);
 
-  const linhaY = logoY + logoHeight + 10;
-  pdf.line(10, linhaY, pageWidth - 10, linhaY);
-
-  let y = linhaY + 10;
-
+  let y = 40;
   pdf.setFontSize(14);
   pdf.text("Dados do Cliente", 14, y);
   pdf.setFontSize(11);
@@ -141,48 +199,32 @@ async function gerarPDF() {
   pdf.text(`Nascimento: ${nascimento}`, 14, y += 7);
   pdf.text(`CNH: ${cnh}`, 14, y += 7);
 
-  pdf.line(10, y += 4, pageWidth - 10, y);
-
-  pdf.setFontSize(14);
-  pdf.text("Dados do Veículo", 14, y += 8);
-  pdf.setFontSize(11);
+  pdf.text("\nDados do Veículo", 14, y += 10);
   pdf.text(`Marca: ${marca}`, 14, y += 8);
   pdf.text(`Modelo: ${modelo}`, 14, y += 7);
   pdf.text(`Ano: ${ano}`, 14, y += 7);
-  pdf.text(`KM Entrega: ${kmEntregaFormatado}`, 14, y += 7);
+  pdf.text(`KM Entrega: ${kmEntrega.toLocaleString('pt-BR')}`, 14, y += 7);
 
-  pdf.line(10, y += 4, pageWidth - 10, y);
-
-  pdf.setFontSize(14);
-  pdf.text("Horários e Datas", 14, y += 8);
-  pdf.setFontSize(11);
+  pdf.text("\nHorários e Datas", 14, y += 10);
   pdf.text(`Entrega: ${horaEntrega}`, 14, y += 8);
   pdf.text(`Devolução: ${horaDevolucao}`, 14, y += 7);
   pdf.text(`Data de Entrega: ${dataEntrega}`, 14, y += 7);
   pdf.text(`Data de Devolução: ${dataDevolucao}`, 14, y += 7);
   pdf.text(`Valor da Diária: R$ ${valorDiaria.toFixed(2)}`, 14, y += 7);
-  pdf.text(`Total: ${diferencaDias} diaria(s): ${valorTotalFormatado}`, 14, y += 7);
+  pdf.text(`Total: ${diferencaDias} diária(s): R$ ${valorTotal.toFixed(2)}`, 14, y += 7);
   pdf.text(`Forma de Pagamento: ${pagamento}`, 14, y += 7);
 
-  pdf.line(10, y += 4, pageWidth - 10, y);
-
-  pdf.setFontSize(14);
-  pdf.text("Locador:", 14, y += 8);
-  pdf.setFontSize(11);
+  pdf.text("\nLocador: ", 14, y += 10);
   pdf.text(`${vendedor}`, 14, y += 7);
 
-  pdf.line(10, y += 4, pageWidth - 10, y);
-
-  pdf.line(60, y += 17, 150, y);
-  pdf.setFontSize(11);
+  pdf.line(60, y += 20, 150, y);
   pdf.text("Assinatura do Cliente", 105, y + 7, { align: "center" });
 
   pdf.line(60, y += 25, 150, y);
   pdf.text("Assinatura do Locador", 105, y + 7, { align: "center" });
 
-  const dataHora = new Date().toLocaleString('pt-BR');
   pdf.setFontSize(10);
-  pdf.text(`Emitido em: ${dataHora}`, pageWidth / 2, 290, { align: "center" });
+  pdf.text(`Emitido em: ${new Date().toLocaleString('pt-BR')}`, pageWidth / 2, 290, { align: "center" });
 
   pdf.save(`${nome}_locacao.pdf`);
 }
