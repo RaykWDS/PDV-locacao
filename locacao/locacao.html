@@ -112,74 +112,84 @@ async function gerarPDF() {
 
   const empresa = "Rostur Rent Car";
   const cnpj = "00.000.000/0000-00";
+  const pageWidth = 210;
+
+  // Carregar logo como base64
+  const getBase64ImageFromURL = async (url) => {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const base64Logo = await getBase64ImageFromURL("Logo.png");
+
   const pdf = new jsPDF();
-  const pageWidth = pdf.internal.pageSize.getWidth();
 
-  // Logo
-  const logo = new Image();
-  logo.src = 'Logo.png';
-  logo.onload = () => {
-    pdf.addImage(logo, 'PNG', 10, 5, 30, 30);
-    pdf.setFontSize(18);
-    pdf.text(empresa, 45, 15);
-    pdf.setFontSize(12);
-    pdf.text(`CNPJ: ${cnpj}`, 45, 23);
+  pdf.addImage(base64Logo, 'PNG', 10, 5, 30, 30);
+  pdf.setFontSize(18);
+  pdf.text(empresa, 45, 15);
+  pdf.setFontSize(12);
+  pdf.text(`CNPJ: ${cnpj}`, 45, 23);
 
-    let y = 40;
-    pdf.line(10, y, pageWidth - 10, y);
+  let y = 40;
+  pdf.line(10, y, pageWidth - 10, y);
 
-    pdf.setFontSize(14);
-    pdf.text("Dados do Cliente", 14, y += 10);
-    pdf.setFontSize(11);
-    pdf.text(`Nome: ${nome}`, 14, y += 8);
-    pdf.text(`CPF: ${cpf}`, 14, y += 7);
-    pdf.text(`Nascimento: ${nascimento}`, 14, y += 7);
-    pdf.text(`CNH: ${cnh}`, 14, y += 7);
+  pdf.setFontSize(14);
+  pdf.text("Dados do Cliente", 14, y += 10);
+  pdf.setFontSize(11);
+  pdf.text(`Nome: ${nome}`, 14, y += 8);
+  pdf.text(`CPF: ${cpf}`, 14, y += 7);
+  pdf.text(`Nascimento: ${nascimento}`, 14, y += 7);
+  pdf.text(`CNH: ${cnh}`, 14, y += 7);
 
-    pdf.line(10, y += 4, pageWidth - 10, y);
+  pdf.line(10, y += 4, pageWidth - 10, y);
 
-    pdf.setFontSize(14);
-    pdf.text("Dados do Veículo", 14, y += 8);
-    pdf.setFontSize(11);
-    pdf.text(`Marca: ${marca}`, 14, y += 8);
-    pdf.text(`Modelo: ${modelo}`, 14, y += 7);
-    pdf.text(`Ano: ${ano}`, 14, y += 7);
-    pdf.text(`KM Entrega: ${kmEntregaFormatado}`, 14, y += 7);
+  pdf.setFontSize(14);
+  pdf.text("Dados do Veículo", 14, y += 8);
+  pdf.setFontSize(11);
+  pdf.text(`Marca: ${marca}`, 14, y += 8);
+  pdf.text(`Modelo: ${modelo}`, 14, y += 7);
+  pdf.text(`Ano: ${ano}`, 14, y += 7);
+  pdf.text(`KM Entrega: ${kmEntregaFormatado}`, 14, y += 7);
 
-    pdf.line(10, y += 4, pageWidth - 10, y);
+  pdf.line(10, y += 4, pageWidth - 10, y);
 
-    pdf.setFontSize(14);
-    pdf.text("Horários e Datas", 14, y += 8);
-    pdf.setFontSize(11);
-    pdf.text(`Entrega: ${horaEntrega}`, 14, y += 8);
-    pdf.text(`Devolução: ${horaDevolucao}`, 14, y += 7);
-    pdf.text(`Data de Entrega: ${dataEntrega}`, 14, y += 7);
-    pdf.text(`Data de Devolução: ${dataDevolucao}`, 14, y += 7);
-    pdf.text(`Valor da Diária: R$ ${valorDiaria.toFixed(2)}`, 14, y += 7);
-    pdf.text(`Total: ${diferencaDias} diária(s): ${valorTotalFormatado}`, 14, y += 7);
-    pdf.text(`Forma de Pagamento: ${pagamento}`, 14, y += 7);
+  pdf.setFontSize(14);
+  pdf.text("Horários e Datas", 14, y += 8);
+  pdf.setFontSize(11);
+  pdf.text(`Entrega: ${horaEntrega}`, 14, y += 8);
+  pdf.text(`Devolução: ${horaDevolucao}`, 14, y += 7);
+  pdf.text(`Data de Entrega: ${dataEntrega}`, 14, y += 7);
+  pdf.text(`Data de Devolução: ${dataDevolucao}`, 14, y += 7);
+  pdf.text(`Valor da Diária: R$ ${valorDiaria.toFixed(2)}`, 14, y += 7);
+  pdf.text(`Total: ${diferencaDias} diária(s): ${valorTotalFormatado}`, 14, y += 7);
+  pdf.text(`Forma de Pagamento: ${pagamento}`, 14, y += 7);
 
-    pdf.line(10, y += 4, pageWidth - 10, y);
+  pdf.line(10, y += 4, pageWidth - 10, y);
 
-    pdf.setFontSize(14);
-    pdf.text("Locador:", 14, y += 8);
-    pdf.setFontSize(11);
-    pdf.text(`${vendedor}`, 14, y += 7);
+  pdf.setFontSize(14);
+  pdf.text("Locador:", 14, y += 8);
+  pdf.setFontSize(11);
+  pdf.text(`${vendedor}`, 14, y += 7);
 
-    pdf.line(10, y += 4, pageWidth - 10, y);
+  pdf.line(10, y += 4, pageWidth - 10, y);
 
-    pdf.line(60, y += 17, 150, y);
-    pdf.setFontSize(11);
-    pdf.text("Assinatura do Cliente", 105, y + 7, { align: "center" });
+  pdf.line(60, y += 17, 150, y);
+  pdf.setFontSize(11);
+  pdf.text("Assinatura do Cliente", 105, y + 7, { align: "center" });
 
-    pdf.line(60, y += 25, 150, y);
-    pdf.text("Assinatura do Locador", 105, y + 7, { align: "center" });
+  pdf.line(60, y += 25, 150, y);
+  pdf.text("Assinatura do Locador", 105, y + 7, { align: "center" });
 
-    const dataHora = new Date().toLocaleString('pt-BR');
-    pdf.setFontSize(10);
-    pdf.text(`Emitido em: ${dataHora}`, pageWidth / 2, 290, { align: "center" });
+  const dataHora = new Date().toLocaleString('pt-BR');
+  pdf.setFontSize(10);
+  pdf.text(`Emitido em: ${dataHora}`, pageWidth / 2, 290, { align: "center" });
 
-    pdf.save(`${nome}_locacao.pdf`);
+  pdf.save(`${nome}_locacao.pdf`);
 }
 </script>
 
