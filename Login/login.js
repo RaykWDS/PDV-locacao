@@ -16,8 +16,8 @@ form.addEventListener('submit', function(event) {
     if (username === 'rosiel.ferreira' && password === 'ferreira2025') {
         alert('Login bem-sucedido! Bem-vindo, ' + username);
         sessionStorage.setItem('logado', 'true');
-        window.location.href = "../locacao/locacao.html"; // Redirecionamento após login bem-sucedido
-      } else {
+        window.location.href = "/PDV-locacao/locacao/locacao.html"; // caminho absoluto correto
+    } else {
         alert('Usuário ou senha incorretos!');
-      }
-    });
+    }
+});
